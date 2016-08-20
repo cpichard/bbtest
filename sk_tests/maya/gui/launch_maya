@@ -1,0 +1,2 @@
+#!/bin/bash
+maya -command "evalDeferred(\"quit -force\")"
