@@ -1,7 +1,7 @@
-Pipeline Test Framework
+Black Box Test Pipeline
 =======================
 
-This is a simple driver to launch functionnal tests on softwares used in the animation and vfx industry.
+This is a simple driver to launch functional tests on softwares used in the animation and vfx industry.
 
 Compilation:
 
