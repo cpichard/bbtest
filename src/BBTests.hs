@@ -10,6 +10,7 @@ import Data.Aeson.Types
 import Control.Applicative
 import System.Process
 import System.Environment
+import System.IO
 
 data BBTestUnit =
   BBTestUnit
@@ -44,14 +45,15 @@ instance FromJSON BBTestSuite where
 instance ToJSON BBTestSuite where
     toJSON (BBTestSuite p e t)  = object [ "suiteName" .= p, "envCmd" .= e, "tests" .= t] 
 
-
+-- Write a simple example file
 writeExampleFile = do
-  let bbtu = BBTestUnit "bbt1" "bbt2" "bbt3" True
-      bbts = BBTestSuite "bbts1" ["res", "env"] [bbtu]
-  encodeFile "example.yaml" [bbts, bbts]
+  let bbtu1 = BBTestUnit "ls" "examples/sk_tests/ls" ".sh" True
+      bbtu2 = BBTestUnit "ls" "examples/sk_tests/ls2" ".sh" True
+      bbts = BBTestSuite "ls_test" ["bash"] [bbtu1, bbtu2]
+  encodeFile "examples/example1.yaml" [bbts, bbts]
 
 
-buildTestSuite :: String -> [BBTestUnit] -> [Test.Framework.TestTypes.Test] -> IO TestSuite
+buildTestSuite :: String -> [BBTestUnit] -> [Test] -> IO TestSuite
 buildTestSuite name (x:xs) tests = do
     newTest <- blackBoxTests (path x) (progName x) (suffix x) defaultBBTArgs
     buildTestSuite name xs (tests ++ newTest)
@@ -60,13 +62,18 @@ buildTestSuite name [] tests = return $ makeTestSuite name tests
 
 runSuites :: [BBTestSuite] -> IO ()
 runSuites (x:xs) = do
+  putStrLn "running suites"
   thisExePath <- getExecutablePath
-  let testUnit = "/tmp/suite1.yaml" -- FIXME create a tmp file
+  (testUnit, hTestUnit) <- openTempFile "/tmp" "testunit.yaml" -- FIXME delete temp file 
   encodeFile testUnit (tests x)
-  let command = (envCmd x) ++ [thisExePath] ++ [suiteName x] ++ [testUnit]
-  (_, _, _, p) <- createProcess (proc (head command) (tail command)) 
-  putStrLn $ "loading environment" 
+  let command = [thisExePath] ++ [suiteName x] ++ [testUnit]
+  let env = (envCmd x)
+  (Just hin, _, _, p) <- createProcess (proc (head env) (tail env)) {std_in = CreatePipe}
+  putStrLn $ "loading environment " ++ (show env)
+  putStrLn $ "running " ++ (show command)
+  -- TODO send command to process
+  hPutStrLn hin (showCommandForUser (head command) (tail command))
   waitForProcess p
   putStrLn $ "leaving environment" 
-  return ()
-
+  runSuites xs
+runSuites [] = putStrLn "all suite processed"

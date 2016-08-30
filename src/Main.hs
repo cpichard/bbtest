@@ -13,20 +13,18 @@ import Control.Applicative
 --
 main :: IO ()
 main = do
-  --writeExampleFile
+ -- writeExampleFile
   args <- getArgs
   let argsLength = length args
   case argsLength of
-    1 -> do
+    1 -> do -- Read a yaml file containing a list of suites
       maybeConfig <- decodeFileEither (head args) :: IO (Either ParseException [BBTestSuite])
       case maybeConfig of
-          -- Try to read a singleBBTestUnit
           Right suites -> do 
             runSuites suites
-            print suites
           Left errTestSuite -> do
                 print $ prettyPrintParseException errTestSuite
-    2 -> do 
+    2 -> do -- Read a yaml file containing a list of units 
       maybeTestUnit <- decodeFileEither (last args) :: IO (Either ParseException [BBTestUnit])
       case maybeTestUnit of
           Right bbtu -> do
