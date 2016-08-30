@@ -6,21 +6,35 @@ import Test.Framework
 import MayaTests
 import System.Environment
 import System.Process
+import Data.Yaml
+import Data.Aeson.Types
+import Control.Applicative
 
+--
 main :: IO ()
 main = do
+  --writeExampleFile
   args <- getArgs
-  if length args == 0
-    then do -- load environment here
-      exe <- getExecutablePath
-      -- FIXME: this should go in an env file
-      let command = ["env", "skMaya", "--", exe, "run"]
-      (_, _, _, p) <- createProcess (proc "rez" command) 
-      putStrLn "loading environment"
-      waitForProcess p
-      putStrLn "leaving environment"
-      return ()
-    else do -- run tests in parallel
-      mayaTests <- buildMayaTests "./sk_tests" -- FIXME: sk_tests should be a command line argument 
-      -- FIXME : select the number of thread, 10 is good on my machine right now
-      htfMainWithArgs ["-j10"] mayaTests
+  let argsLength = length args
+  case argsLength of
+    1 -> do
+      maybeConfig <- decodeFileEither (head args) :: IO (Either ParseException [BBTestSuite])
+      case maybeConfig of
+          -- Try to read a singleBBTestUnit
+          Right suites -> do 
+            runSuites suites
+            print suites
+          Left errTestSuite -> do
+                print $ prettyPrintParseException errTestSuite
+    2 -> do 
+      maybeTestUnit <- decodeFileEither (last args) :: IO (Either ParseException [BBTestUnit])
+      case maybeTestUnit of
+          Right bbtu -> do
+             testSuite <- buildTestSuite (head args) bbtu []
+             htfMainWithArgs ["-j10"] testSuite
+          Left errTestUnit -> do 
+                print $ prettyPrintParseException errTestUnit
+    _ -> error "wrong number of arguments on the command line"
+
+
+
