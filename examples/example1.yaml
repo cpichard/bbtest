@@ -1,0 +1,40 @@
+- envCmd:
+  - bash
+  tests:
+  - suffix: .sh
+    verbose: true
+    path: examples/vfx_tests/maya/gui
+    progName: examples/vfx_tests/maya/gui/launch_maya
+  - suffix: .sh
+    verbose: true
+    path: examples/vfx_tests/maya/prompt
+    progName: examples/vfx_tests/maya/prompt/launch_maya
+  - suffix: .py
+    verbose: true
+    path: examples/vfx_tests/maya/python
+    progName: python
+  - suffix: .mel
+    verbose: true
+    path: examples/vfx_tests/maya/script
+    progName: examples/vfx_tests/maya/script/launch_maya
+  suiteName: maya
+- envCmd:
+  - bash
+  tests:
+  - suffix: .sh
+    verbose: true
+    path: examples/vfx_tests/maya/gui
+    progName: examples/vfx_tests/maya/gui/launch_maya
+  - suffix: .sh
+    verbose: true
+    path: examples/vfx_tests/maya/prompt
+    progName: examples/vfx_tests/maya/prompt/launch_maya
+  - suffix: .py
+    verbose: true
+    path: examples/vfx_tests/maya/python
+    progName: python
+  - suffix: .mel
+    verbose: true
+    path: examples/vfx_tests/maya/script
+    progName: examples/vfx_tests/maya/script/launch_maya
+  suiteName: maya

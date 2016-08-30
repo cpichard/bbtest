@@ -47,9 +47,11 @@ instance ToJSON BBTestSuite where
 
 -- Write a simple example file
 writeExampleFile = do
-  let bbtu1 = BBTestUnit "ls" "examples/sk_tests/ls" ".sh" True
-      bbtu2 = BBTestUnit "ls" "examples/sk_tests/ls2" ".sh" True
-      bbts = BBTestSuite "ls_test" ["bash"] [bbtu1, bbtu2]
+  let bbtu1 = BBTestUnit "examples/vfx_tests/maya/gui/launch_maya" "examples/vfx_tests/maya/gui" ".sh" True
+      bbtu2 = BBTestUnit "examples/vfx_tests/maya/prompt/launch_maya" "examples/vfx_tests/maya/prompt" ".sh" True
+      bbtu3 = BBTestUnit "python" "examples/vfx_tests/maya/python" ".py" True
+      bbtu4 = BBTestUnit "examples/vfx_tests/maya/script/launch_maya" "examples/vfx_tests/maya/script" ".mel" True
+      bbts = BBTestSuite "maya" ["bash"] [bbtu1, bbtu2, bbtu3, bbtu4]
   encodeFile "examples/example1.yaml" [bbts, bbts]
 
 

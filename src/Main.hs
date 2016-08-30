@@ -13,7 +13,7 @@ import Control.Applicative
 --
 main :: IO ()
 main = do
- -- writeExampleFile
+  --writeExampleFile
   args <- getArgs
   let argsLength = length args
   case argsLength of
