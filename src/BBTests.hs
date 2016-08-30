@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings, TypeSynonymInstances, FlexibleInstances #-}
 {-# OPTIONS_GHC -F -pgmF htfpp #-}
-module MayaTests where
+module BBTests where
 
 import Test.Framework
 import Test.Framework.TestTypes

@@ -3,7 +3,7 @@
 module Main where
 
 import Test.Framework
-import MayaTests
+import BBTests 
 import System.Environment
 import System.Process
 import Data.Yaml
