@@ -6,11 +6,13 @@ import Test.Framework
 import Test.Framework.TestTypes
 import Test.Framework.BlackBoxTest
 import Data.Yaml
+import Data.List
 import Data.Aeson.Types
 import Control.Applicative
 import System.Process
 import System.Environment
 import System.IO
+import System.Directory
 
 data BBTestUnit =
   BBTestUnit
@@ -57,7 +59,7 @@ writeExampleFile = do
 
 buildTestSuite :: String -> [BBTestUnit] -> [Test] -> IO TestSuite
 buildTestSuite name (x:xs) tests = do
-    newTest <- blackBoxTests (path x) (progName x) (suffix x) defaultBBTArgs
+    newTest <- blackBoxTests (path x) (progName x) (suffix x) (defaultBBTArgs {bbtArgs_verbose = (BBTests.verbose x)})
     buildTestSuite name xs (tests ++ newTest)
 buildTestSuite name [] tests = return $ makeTestSuite name tests
     
@@ -68,14 +70,21 @@ runSuites (x:xs) = do
   thisExePath <- getExecutablePath
   (testUnit, hTestUnit) <- openTempFile "/tmp" "testunit.yaml" -- FIXME delete temp file 
   encodeFile testUnit (tests x)
-  let command = [thisExePath] ++ [suiteName x] ++ [testUnit]
-  let env = (envCmd x)
-  (Just hin, _, _, p) <- createProcess (proc (head env) (tail env)) {std_in = CreatePipe}
+  hClose hTestUnit
+  let command = envCmd x ++ [thisExePath, suiteName x, testUnit]
+  --let env = (showCommandForUser (head (envCmd x)) (tail (envCmd x))) ++ " " ++(showCommandForUser (head command) (tail command)) 
+  let env = showCommandForUser (head command) (tail command)
+  
+  --(Just hin, _, _, p) <- createProcess (shell env){std_in = CreatePipe}
+  (_, _, _, p) <- createProcess (shell env)
   putStrLn $ "loading environment " ++ (show env)
   putStrLn $ "running " ++ (show command)
   -- TODO send command to process
-  hPutStrLn hin (showCommandForUser (head command) (tail command))
-  waitForProcess p
+  --hPutStrLn hin (showCommandForUser (head command) (tail command))
+  code <- waitForProcess p
+  
   putStrLn $ "leaving environment" 
+  removeFile testUnit
   runSuites xs
 runSuites [] = putStrLn "all suite processed"
+
