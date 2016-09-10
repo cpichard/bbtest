@@ -1,15 +1,22 @@
 Pipeline Black Box Test
 =======================
 
-This is a simple driver to launch functional tests on softwares used in the animation and vfx industry.
+bbtest is a simple driver program to run functional tests. The tests should be organised in a directory structure and described in a yaml file. Some examples are provided for visual effect and animation softwares.
 
 Compilation:
 ------------
 
-install haskell stack
+install haskell stack: https://www.haskellstack.org/
+then
 
-then stack build
-
+```
 stack install
+```
 
+Running bbtest examples
+-----------------------
 
+```
+cd examples
+bbtest example1.yaml
+```
