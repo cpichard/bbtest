@@ -1,4 +1,4 @@
-## Welcome to GitHub Pages
+## bbtest - black box testing
 
 You can use the [editor on GitHub](https://github.com/cpichard/bbtest/edit/master/docs/index.md) to maintain and preview the content for your website in Markdown files.
 
